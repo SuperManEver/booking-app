@@ -40,6 +40,10 @@
       "last 1 safari version"
     ]
   },
+  "engines": {
+    "node": "^18.16.0",
+    "yarn": "^1.22.19"
+  },
   "volta": {
     "node": "18.16.0",
     "yarn": "1.22.19"
