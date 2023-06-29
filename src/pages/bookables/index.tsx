@@ -1,10 +1,10 @@
 // components
-import BookablesList from 'components/bookables-list';
+import BookableView from './bookable-view';
 
 function BookablesPage() {
   return (
     <main className="bookables-page">
-      <BookablesList />
+      <BookableView />
     </main>
   );
 }

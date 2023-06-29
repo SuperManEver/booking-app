@@ -1,4 +1,4 @@
-import { useReducer, useRef, useEffect, Fragment } from 'react';
+import { useRef, useEffect, Fragment } from 'react';
 
 // components
 import Spinner from 'components/UI/spinner';
@@ -10,38 +10,25 @@ import { Bookable } from 'types';
 import { FaArrowRight } from 'react-icons/fa';
 
 // utils
-import reducer, { IState } from './reducer';
+import { IState } from 'pages/bookables/bookable-view/reducer';
 import { getData } from 'utils';
 
 // data
 import data from 'data/static.json';
 
-// constants
-const initialState: IState = {
-  group: 'Rooms',
-  bookableIndex: 0,
-  hasDetails: true,
-  bookables: [],
-  isLoading: true,
-  error: null,
-};
-
 type Group = 'Kit' | 'Rooms';
 
-function BookablesList() {
+interface IProps {
+  state: IState;
+  dispatch: (data: any) => void;
+}
+
+function BookablesList({ state, dispatch }: IProps) {
   const nextButtonRef = useRef<any>();
 
-  const days = data['days'];
-  const sessions = data['sessions'];
-
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const { group, bookables, bookableIndex, hasDetails, error, isLoading } =
-    state;
+  const { group, bookables, bookableIndex, error, isLoading } = state;
 
   const bookablesInGroup = bookables.filter((b) => b.group === group);
-
-  const bookable = bookablesInGroup[bookableIndex];
 
   const groups = [...new Set(bookables.map((b) => b.group))];
 
@@ -61,7 +48,7 @@ function BookablesList() {
           payload: error,
         }),
       );
-  }, []);
+  }, [dispatch]);
 
   function changeBookable(selectedIndex: number) {
     dispatch({
@@ -82,12 +69,8 @@ function BookablesList() {
     dispatch({ type: 'SET_GROUP', payload: group });
   }
 
-  function toggleDetails() {
-    dispatch({ type: 'TOGGLE_HAS_DETAILS' });
-  }
-
   if (error) {
-    return <p>{error.message}</p>;
+    return <p>Error</p>;
   }
 
   if (isLoading) {
@@ -134,46 +117,6 @@ function BookablesList() {
           </button>
         </footer>
       </div>
-
-      {bookable && (
-        <div className="bookable-details">
-          <div className="item">
-            <div className="item-header">
-              <h2>{bookable.title}</h2>
-              <span className="controls">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={hasDetails}
-                    onChange={toggleDetails}
-                  />
-                  Show Details
-                </label>
-              </span>
-            </div>
-
-            <p>{bookable.notes}</p>
-
-            {hasDetails && (
-              <div className="item-details">
-                <h3>Availability</h3>
-                <div className="bookable-availability">
-                  <ul>
-                    {bookable.days.sort().map((d) => (
-                      <li key={d}>{days[d]}</li>
-                    ))}
-                  </ul>
-                  <ul>
-                    {bookable.sessions.map((s) => (
-                      <li key={s}>{sessions[s]}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </Fragment>
   );
 }
