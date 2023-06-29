@@ -1,14 +1,27 @@
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 import reducer from './reducer';
 import { getWeek } from 'utils';
-import { FaChevronLeft, FaCalendarDay, FaChevronRight } from 'react-icons/fa';
+import {
+  FaChevronLeft,
+  FaCalendarDay,
+  FaChevronRight,
+  FaCalendarCheck,
+} from 'react-icons/fa';
 
 interface IProps {
   date: Date;
 }
 
 function WeekPicker({ date }: IProps) {
+  const [dateText, setDateText] = useState('2020-06-24');
   const [week, dispatch] = useReducer(reducer, date, getWeek);
+
+  function goToDate() {
+    dispatch({
+      type: 'SET_DATE',
+      payload: dateText,
+    });
+  }
 
   return (
     <div>
@@ -22,6 +35,21 @@ function WeekPicker({ date }: IProps) {
           <FaCalendarDay />
           <span>Today</span>
         </button>
+
+        <span>
+          <input
+            type="text"
+            value={dateText}
+            onChange={(e) => setDateText(e.target.value)}
+            placeholder="e.g. 2020-09-02"
+            defaultValue="2020-06-24"
+          />
+
+          <button className="go btn" onClick={goToDate}>
+            <FaCalendarCheck />
+            <span>Go</span>
+          </button>
+        </span>
 
         <button className="btn" onClick={() => dispatch({ type: 'NEXT_WEEK' })}>
           <span>Next</span>

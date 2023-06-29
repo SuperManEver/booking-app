@@ -1,11 +1,21 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 
-// data
-import data from 'data/static.json';
+// components
+import Spinner from 'components/UI/spinner';
 
 function UsersList() {
-  const users = data['users'];
+  const [users, setUsers] = useState<any[] | null>(null);
   const [selectedUserIdx, setUser] = useState(1);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/users')
+      .then((resp) => resp.json())
+      .then((data) => setUsers(data));
+  }, []);
+
+  if (!users) {
+    return <Spinner />;
+  }
 
   const currentUser = users[selectedUserIdx];
 
