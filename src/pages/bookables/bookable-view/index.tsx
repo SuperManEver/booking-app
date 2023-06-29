@@ -1,8 +1,11 @@
-import { useReducer, Fragment } from 'react';
+import { useReducer, useState, Fragment } from 'react';
 
 // components
 import Details from 'components/bookables-details';
 import List from 'components/bookables-list';
+
+// interfaces
+import { Bookable } from 'types';
 
 import reducer from './reducer';
 
@@ -15,17 +18,17 @@ const initialState = {
 };
 
 function BookableView() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [bookable, setBookable] = useState<Bookable | null>(null);
 
-  const bookablesInGroup = state.bookables.filter(
-    (b) => b.group === state.group,
-  );
-  const bookable = bookablesInGroup[state.bookableIndex];
+  // const bookablesInGroup = state.bookables.filter(
+  //   (b) => b.group === state.group,
+  // );
+  // const bookable = bookablesInGroup[state.bookableIndex];
 
   return (
     <Fragment>
-      <List state={state} dispatch={dispatch} />
-      <Details bookable={bookable} />
+      <List bookable={bookable} setBookable={setBookable} />
+      {bookable && <Details bookable={bookable} />}
     </Fragment>
   );
 }

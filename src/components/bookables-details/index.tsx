@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { days, sessions } from 'data/static.json';
+import data from 'data/static.json';
 
 // interfaces
 import { Bookable } from 'types';
@@ -9,6 +9,8 @@ interface IProps {
 }
 
 function BookableDetails({ bookable }: IProps) {
+  const { days, sessions } = data;
+
   const [hasDetails, setHasDetails] = useState(true);
 
   function toggleDetails() {
