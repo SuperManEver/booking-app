@@ -1,10 +1,12 @@
 import { Bookable } from 'types';
 
-type IState = {
+export type IState = {
   group: string;
   bookableIndex: number;
   hasDetails: boolean;
   bookables: Bookable[];
+  isLoading: boolean;
+  error: Error | null;
 };
 
 type Action = {
@@ -41,6 +43,28 @@ export default function reducer(state: IState, action: Action): IState {
       return {
         ...state,
         bookableIndex: (state.bookableIndex + 1) % count,
+      };
+
+    case 'FETCH_BOOKABLES_REQUEST':
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+        bookables: [],
+      };
+
+    case 'FETCH_BOOKABLES_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        bookables: action.payload,
+      };
+
+    case 'FETCH_BOOKABLES_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
       };
 
     default:

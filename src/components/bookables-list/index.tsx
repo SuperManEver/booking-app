@@ -1,45 +1,77 @@
-import { useReducer, Fragment } from 'react';
-import uniq from 'lodash/uniq';
+import { useReducer, useRef, useEffect, Fragment } from 'react';
+
+// components
+import Spinner from 'components/UI/spinner';
+
+// types
+import { Bookable } from 'types';
 
 // icons
 import { FaArrowRight } from 'react-icons/fa';
 
 // utils
-import reducer from './reducer';
+import reducer, { IState } from './reducer';
+import { getData } from 'utils';
 
 // data
 import data from 'data/static.json';
 
 // constants
-const BOOKABLES = data['bookables'];
-const initialState = {
+const initialState: IState = {
   group: 'Rooms',
   bookableIndex: 0,
   hasDetails: true,
-  bookables: BOOKABLES,
+  bookables: [],
+  isLoading: true,
+  error: null,
 };
 
 type Group = 'Kit' | 'Rooms';
 
 function BookablesList() {
+  const nextButtonRef = useRef<any>();
+
   const days = data['days'];
   const sessions = data['sessions'];
 
-  const groups = uniq(BOOKABLES.map((bookable) => bookable.group));
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { group, bookables, bookableIndex, hasDetails } = state;
+  const { group, bookables, bookableIndex, hasDetails, error, isLoading } =
+    state;
 
   const bookablesInGroup = bookables.filter((b) => b.group === group);
 
   const bookable = bookablesInGroup[bookableIndex];
+
+  const groups = [...new Set(bookables.map((b) => b.group))];
+
+  useEffect(() => {
+    dispatch({ type: 'FETCH_BOOKABLES_REQUEST' });
+
+    getData('http://localhost:3001/bookables')
+      .then((bookables: Bookable[]) =>
+        dispatch({
+          type: 'FETCH_BOOKABLES_SUCCESS',
+          payload: bookables,
+        }),
+      )
+      .catch((error: Error) =>
+        dispatch({
+          type: 'FETCH_BOOKABLES_ERROR',
+          payload: error,
+        }),
+      );
+  }, []);
 
   function changeBookable(selectedIndex: number) {
     dispatch({
       type: 'SET_BOOKABLE',
       payload: selectedIndex,
     });
+
+    if (nextButtonRef && nextButtonRef.current) {
+      nextButtonRef.current.focus();
+    }
   }
 
   function handleNext() {
@@ -52,6 +84,18 @@ function BookablesList() {
 
   function toggleDetails() {
     dispatch({ type: 'TOGGLE_HAS_DETAILS' });
+  }
+
+  if (error) {
+    return <p>{error.message}</p>;
+  }
+
+  if (isLoading) {
+    return (
+      <p>
+        <Spinner /> Loading bookables...
+      </p>
+    );
   }
 
   return (
@@ -79,7 +123,12 @@ function BookablesList() {
         </ul>
 
         <footer>
-          <button className="btn" onClick={handleNext} autoFocus>
+          <button
+            className="btn"
+            onClick={handleNext}
+            ref={nextButtonRef}
+            autoFocus
+          >
             <FaArrowRight />
             <span>Next</span>
           </button>
