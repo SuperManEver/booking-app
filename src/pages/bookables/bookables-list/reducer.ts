@@ -1,19 +1,18 @@
 import { Bookable } from 'types';
 
-export type IState = {
+type State = {
   group: string;
   bookableIndex: number;
+  hasDetails: boolean;
   bookables: Bookable[];
   isLoading: boolean;
   error: boolean;
 };
 
-type Action = {
-  type: string;
-  payload?: any;
-};
-
-export default function reducer(state: IState, action: Action): IState {
+export default function reducer(
+  state: State,
+  action: { type: string; payload?: any },
+) {
   switch (action.type) {
     case 'SET_GROUP':
       return {
@@ -28,11 +27,16 @@ export default function reducer(state: IState, action: Action): IState {
         bookableIndex: action.payload,
       };
 
+    case 'TOGGLE_HAS_DETAILS':
+      return {
+        ...state,
+        hasDetails: !state.hasDetails,
+      };
+
     case 'NEXT_BOOKABLE':
       const count = state.bookables.filter(
         (b) => b.group === state.group,
       ).length;
-
       return {
         ...state,
         bookableIndex: (state.bookableIndex + 1) % count,
