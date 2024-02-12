@@ -1,19 +1,24 @@
-import { useState, useEffect } from 'react';
+// hooks
+import { useFetchUsers } from 'utils/hooks';
+
+// types
+import { User } from 'types';
 
 // components
 import Spinner from 'components/UI/spinner';
 
 function UserPicker() {
-  const [users, setUsers] = useState<any[] | null>(null);
+  const { data: users, isLoading } = useFetchUsers() as Partial<{
+    data: User[];
+    isLoading: boolean;
+  }>;
 
-  useEffect(() => {
-    fetch('http://localhost:3001/users')
-      .then((resp) => resp.json())
-      .then((data) => setUsers(data));
-  }, []);
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   if (!users) {
-    return <Spinner />;
+    return null;
   }
 
   return (
