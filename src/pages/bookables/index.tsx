@@ -1,5 +1,5 @@
 // components
-import BookablesList from 'components/bookables-list';
+import BookablesList from './bookables-list';
 
 function BookablesPage() {
   return (

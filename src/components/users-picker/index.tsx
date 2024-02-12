@@ -1,8 +1,19 @@
-// data
-import data from 'data/static.json';
+// hooks
+import { useFetchUsers } from 'utils/hooks';
+
+// components
+import Spinner from 'components/UI/spinner';
 
 function UserPicker() {
-  const users = data['users'];
+  const { data: users, isLoading } = useFetchUsers();
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!users) {
+    return null;
+  }
 
   return (
     <select>

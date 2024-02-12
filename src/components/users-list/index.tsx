@@ -1,11 +1,22 @@
 import { useState, Fragment } from 'react';
 
-// data
-import data from 'data/static.json';
+import { useFetchUsers } from 'utils/hooks';
+
+// components
+import Spinner from 'components/UI/spinner';
 
 function UsersList() {
-  const users = data['users'];
+  const { data: users, isLoading, isError } = useFetchUsers();
+
   const [selectedUserIdx, setUser] = useState(1);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (isError || !users) {
+    return <div>Error is occured</div>;
+  }
 
   const currentUser = users[selectedUserIdx];
 
