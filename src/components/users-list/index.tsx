@@ -1,20 +1,21 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, Fragment } from 'react';
+
+import { useFetchUsers } from 'utils/hooks';
 
 // components
 import Spinner from 'components/UI/spinner';
 
 function UsersList() {
-  const [users, setUsers] = useState<any[] | null>(null);
+  const { data: users, isLoading, isError } = useFetchUsers();
+
   const [selectedUserIdx, setUser] = useState(1);
 
-  useEffect(() => {
-    fetch('http://localhost:3001/users')
-      .then((resp) => resp.json())
-      .then((data) => setUsers(data));
-  }, []);
-
-  if (!users) {
+  if (isLoading) {
     return <Spinner />;
+  }
+
+  if (isError || !users) {
+    return <div>Error is occured</div>;
   }
 
   const currentUser = users[selectedUserIdx];
