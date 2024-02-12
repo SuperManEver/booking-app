@@ -1,4 +1,4 @@
-import { useReducer, useEffect, Fragment } from 'react';
+import { useRef, useReducer, useEffect, Fragment } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import Spinner from 'components/UI/spinner';
 import reducer from './reducer';
@@ -22,6 +22,8 @@ const initialState = {
 };
 
 export default function BookablesList() {
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
+
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const { group, bookableIndex, bookables } = state as {
@@ -66,6 +68,8 @@ export default function BookablesList() {
       type: 'SET_BOOKABLE',
       payload: selectedIndex,
     });
+
+    nextButtonRef && nextButtonRef.current?.focus();
   }
 
   function nextBookable() {
@@ -112,7 +116,12 @@ export default function BookablesList() {
           ))}
         </ul>
         <p>
-          <button className="btn" onClick={nextBookable} autoFocus>
+          <button
+            ref={nextButtonRef}
+            className="btn"
+            onClick={nextBookable}
+            autoFocus
+          >
             <FaArrowRight />
             <span>Next</span>
           </button>
