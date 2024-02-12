@@ -1,17 +1,11 @@
 // hooks
 import { useFetchUsers } from 'utils/hooks';
 
-// types
-import { User } from 'types';
-
 // components
 import Spinner from 'components/UI/spinner';
 
 function UserPicker() {
-  const { data: users, isLoading } = useFetchUsers() as Partial<{
-    data: User[];
-    isLoading: boolean;
-  }>;
+  const { data: users, isLoading } = useFetchUsers();
 
   if (isLoading) {
     return <Spinner />;
