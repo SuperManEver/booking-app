@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import data from 'data/static.json';
 
 // interfaces
 import { Bookable } from 'types';
 
 interface IProps {
-  bookable: Bookable;
+  bookable: Bookable | null;
 }
 
 function BookableDetails({ bookable }: IProps) {
@@ -13,8 +13,12 @@ function BookableDetails({ bookable }: IProps) {
 
   const [hasDetails, setHasDetails] = useState(true);
 
-  function toggleDetails() {
+  const toggleDetails = useCallback(() => {
     setHasDetails((has) => !has);
+  }, []);
+
+  if (!bookable) {
+    return null;
   }
 
   return bookable ? (
