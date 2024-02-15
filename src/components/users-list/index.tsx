@@ -1,14 +1,19 @@
-import { useState, Fragment } from 'react';
+import { Fragment } from 'react';
 
 import { useFetchUsers } from 'utils/hooks';
+
+import { User } from 'types';
 
 // components
 import Spinner from 'components/UI/spinner';
 
-function UsersList() {
-  const { data: users, isLoading, isError } = useFetchUsers();
+interface IProps {
+  user: User | null;
+  setUser(user: User): void;
+}
 
-  const [selectedUserIdx, setUser] = useState(1);
+function UsersList({ user, setUser }: IProps) {
+  const { data: users, isLoading, isError } = useFetchUsers();
 
   if (isLoading) {
     return <Spinner />;
@@ -18,36 +23,17 @@ function UsersList() {
     return <div>Error is occured</div>;
   }
 
-  const currentUser = users[selectedUserIdx];
-
   return (
     <Fragment>
       <ul className="bookables items-list-nav">
-        {users.map((user, i) => (
-          <li key={user.id} className={i === selectedUserIdx ? 'selected' : ''}>
-            <button className="btn" onClick={() => setUser(i)}>
-              {user.name}
+        {users.map((u, idx) => (
+          <li key={u.id} className={idx === u.id ? 'selected' : ''}>
+            <button className="btn" onClick={() => setUser(u)}>
+              {u.name}
             </button>
           </li>
         ))}
       </ul>
-
-      {currentUser && (
-        <div className="bookable-details">
-          <div className="item">
-            <div className="item-header">
-              <h2>{currentUser.name}</h2>
-            </div>
-
-            <div className="item-details">
-              <h3>{currentUser.title}</h3>
-              <div className="bookable-availability">
-                <p>{currentUser.notes}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </Fragment>
   );
 }
